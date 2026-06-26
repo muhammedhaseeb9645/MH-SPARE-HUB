@@ -13,6 +13,14 @@
             --light: #f8fafc;
             --whatsapp: #25d366;
             --brand-blue: #00d2ff;
+            --warning: #f59e0b;
+            
+            /* High-Gloss Metallic Vectors */
+            --shine-metal: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.42) 40%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0.42) 60%, transparent 70%);
+            
+            /* Premium Animation Standard Curves */
+            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         * {
@@ -98,13 +106,15 @@
             border-radius: 30px;
             font-weight: bold;
             font-size: 1rem;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.4s var(--ease-elastic);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            will-change: transform, background-color;
         }
 
         .scale-up {
-            transform: scale(1.08);
+            transform: scale(1.12);
             background: var(--primary);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
         }
 
         .container {
@@ -112,7 +122,7 @@
             margin: 20px auto;
             padding: 0 15px;
             display: grid;
-            grid-template-columns: 1fr 380px;
+            grid-template-columns: 1fr 400px;
             gap: 25px;
         }
 
@@ -127,21 +137,39 @@
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.4s var(--ease-elastic), box-shadow 0.4s var(--ease-smooth), border-color 0.3s ease;
             position: relative;
             display: flex;
             flex-direction: column;
             border: 1px solid #e2e8f0;
+            will-change: transform, box-shadow;
+        }
+
+        /* --- Dynamic Card Metallic Shine Overlays --- */
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 150%;
+            height: 100%;
+            background: var(--shine-metal);
+            z-index: 15;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.1s ease;
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+            left: 150%;
+            transition: left 0.85s var(--ease-smooth);
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.15);
             border-color: #cbd5e1;
-        }
-
-        .product-card.muted {
-            opacity: 0.65;
         }
 
         /* --- Full Screen Borderless Image View Window --- */
@@ -157,11 +185,12 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
         }
 
         .product-card:hover .product-img {
-            transform: scale(1.06);
+            transform: scale(1.08);
         }
 
         /* Translucent floating meta overlays */
@@ -184,7 +213,11 @@
             color: white;
             text-transform: uppercase;
             box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-            transition: background-color 0.2s ease;
+            transition: background-color 0.3s ease, transform 0.3s var(--ease-elastic);
+        }
+
+        .product-card:hover .stock-badge {
+            transform: scale(1.05);
         }
 
         .status-ready { background-color: var(--success); }
@@ -192,8 +225,8 @@
 
         .floating-meta {
             background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 4px 12px;
             border-radius: 20px;
@@ -201,6 +234,47 @@
             align-items: center;
             color: white;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            gap: 6px;
+            transition: transform 0.3s var(--ease-elastic), background-color 0.3s ease;
+        }
+
+        .product-card:hover .floating-meta {
+            transform: scale(1.05);
+            background: rgba(15, 23, 42, 0.85);
+        }
+
+        /* --- PREMIUM POPULAR BADGE SYSTEM --- */
+        .popular-badge {
+            background: linear-gradient(135deg, #ff9d00, #f59e0b);
+            color: #0f172a;
+            font-weight: 900;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 12px;
+            letter-spacing: 0.7px;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+            animation: popularFloat 2.4s ease-in-out infinite, popularGlow 2.4s ease-in-out infinite;
+            will-change: transform, box-shadow;
+        }
+
+        @keyframes popularFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        @keyframes popularGlow {
+            0%, 100% { 
+                box-shadow: 0 0 8px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+                filter: brightness(1);
+            }
+            50% { 
+                box-shadow: 0 0 18px rgba(245, 158, 11, 0.85), inset 0 1px 0 rgba(255,255,255,0.4);
+                filter: brightness(1.15);
+            }
         }
 
         .product-id {
@@ -215,6 +289,7 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
+            background-color: #f8fafc;
         }
 
         .product-name {
@@ -225,85 +300,195 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             line-height: 1.4;
             color: var(--dark);
         }
 
-        .tier-indicator {
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            padding: 8px 12px;
-            border-radius: 8px;
+        /* --- Light Red Description Container Box --- */
+        .product-desc {
             font-size: 0.8rem;
-            margin-bottom: 15px;
-            color: #475569;
-            font-weight: 500;
+            color: #7f1d1d; 
+            background-color: rgba(239, 68, 68, 0.06); 
+            border-left: 3px solid #f87171; 
+            padding: 6px 10px;
+            border-radius: 4px;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            height: 48px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .tier-indicator {
+            background: transparent;
+            font-size: 0.78rem;
+            margin-bottom: 4px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* --- Clean Grid Side-By-Side White Boxes --- */
+        .info-white-box-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .price-white-box, .qty-white-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 8px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02), 0 2px 4px rgba(0,0,0,0.02);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
         }
 
         .current-unit-price {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--primary);
-            margin-bottom: 18px;
+            transition: transform 0.3s var(--ease-elastic);
         }
 
-        .qty-controls {
+        .product-card:hover .current-unit-price {
+            transform: scale(1.05);
+        }
+
+        /* --- Realigned Layout Controls Container --- */
+        .action-layout-block {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 10px;
             margin-top: auto;
-            gap: 8px;
-        }
-
-        .qty-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            border: none;
-            background: #e2e8f0;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-        
-        .qty-btn:hover:not(:disabled) {
-            background: #cbd5e1;
-        }
-
-        .qty-input {
-            width: 50px;
-            height: 40px;
-            text-align: center;
-            font-size: 1rem;
-            font-weight: bold;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
         }
 
         .add-btn {
-            flex-grow: 1;
-            height: 40px;
+            width: 100%;
+            height: 42px;
             border: none;
             background: var(--primary);
             color: white;
             font-weight: bold;
+            font-size: 0.95rem;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s ease, box-shadow 0.2s ease;
+            will-change: transform;
         }
 
         .add-btn:hover:not(:disabled) {
             background: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
 
-        .qty-btn:disabled, .qty-input:disabled, .add-btn:disabled {
-            opacity: 0.3;
+        /* Out of Stock Style Button Indicator */
+        .add-btn.out-of-stock {
+            background: #cbd5e1;
+            color: #64748b;
             cursor: not-allowed;
+        }
+        .add-btn.out-of-stock:hover {
+            background: #cbd5e1;
+            box-shadow: none;
+        }
+
+        /* --- PRE-BOOKING BUTTON SYSTEM --- */
+        .prebook-btn {
+            width: 100%;
+            height: 42px;
+            border: none;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            font-weight: bold;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25);
+            transition: background 0.2s, transform 0.1s ease, box-shadow 0.2s ease;
+        }
+
+        .prebook-btn:hover {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.45);
+        }
+
+        .add-btn:active:not(:disabled), .prebook-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Quantity Adjustment styling inside its White Box wrapper */
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 2px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: #f1f5f9;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.1s ease;
+        }
+        
+        .qty-btn:hover:not(:disabled) {
+            background: #e2e8f0;
+            color: var(--dark);
+        }
+
+        .qty-btn:active:not(:disabled) {
+            transform: scale(0.92);
+        }
+
+        .qty-input {
+            width: 45px;
+            height: 28px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border: none;
+            background: transparent;
+            color: var(--dark);
+        }
+
+        .qty-input:focus {
+            outline: none;
+        }
+
+        /* Strip Native Arrows */
+        .qty-input::-webkit-outer-spin-button,
+        .qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         .cart-panel {
@@ -314,6 +499,7 @@
             height: fit-content;
             position: sticky;
             top: 90px;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
         }
 
         .cart-toggle-header {
@@ -322,24 +508,46 @@
             align-items: center;
             border-bottom: 2px solid #f1f5f9;
             padding-bottom: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .cart-title { font-size: 1.1rem; font-weight: 700; }
         .toggle-icon { display: none; }
 
+        /* --- Cart Header Column Labels --- */
+        .cart-table-header {
+            display: grid;
+            grid-template-columns: 1fr 90px 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 5px;
+        }
+        .col-price { text-align: right; padding-right: 5px; }
+
         .cart-items-list {
             max-height: 350px;
             overflow-y: auto;
             margin-bottom: 15px;
+            scroll-behavior: smooth;
         }
 
         .cart-item {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 90px 40px;
             align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid #f1f5f9;
+            animation: slideInRow 0.35s var(--ease-smooth) forwards;
+            will-change: transform, opacity;
+        }
+
+        @keyframes slideInRow {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .cart-item-info h4 {
@@ -351,6 +559,31 @@
         }
 
         .cart-item-info p { font-size: 0.8rem; color: #64748b; }
+        
+        .cart-item-status {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #b91c1c;
+            background: #fee2e2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+
+        /* Total Price Column styling */
+        .cart-item-price {
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-align: right;
+            padding-right: 5px;
+            color: var(--dark);
+        }
+
+        .cart-item-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
 
         .remove-item {
             color: var(--danger);
@@ -364,10 +597,11 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s ease;
         }
 
         .remove-item:hover { background: #fca5a5; }
+        .remove-item:active { transform: scale(0.85); }
 
         .whatsapp-btn {
             width: 100%;
@@ -383,6 +617,16 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transition: background-color 0.2s, transform 0.1s ease, box-shadow 0.2s ease;
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #22c55e;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .whatsapp-btn:active {
+            transform: scale(0.98);
         }
 
         @media (max-width: 900px) {
@@ -398,13 +642,17 @@
                 padding: 15px;
                 background: #ffffff;
                 transform: translateY(calc(100% - 62px));
-                transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             }
-            .cart-panel.open { transform: translateY(0); }
+            .cart-panel.open { transform: translateY(0); box-shadow: 0 -10px 35px rgba(15, 23, 42, 0.2); }
             .cart-toggle-header { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-            .cart-panel.open .cart-toggle-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px; }
+            .cart-panel.open .cart-toggle-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 10px; }
             .toggle-icon { display: block; font-size: 0.9rem; transition: transform 0.3s ease; }
             .cart-panel.open .toggle-icon { transform: rotate(180deg); }
+            
+            .cart-table-header { display: none; }
+            .cart-panel.open .cart-table-header { display: grid; }
+            
             .cart-items-list { display: none; max-height: 240px; }
             .cart-panel.open .cart-items-list { display: block; }
         }
@@ -427,6 +675,13 @@
                 <div class="cart-title">Cart Items (<span id="cartCount">0</span>)</div>
                 <div class="toggle-icon">▲</div>
             </div>
+            
+            <div class="cart-table-header">
+                <div>Item Detail</div>
+                <div class="col-price">Price</div>
+                <div style="text-align: right;">Action</div>
+            </div>
+
             <div class="cart-items-list" id="cartItems" onclick="event.stopPropagation();"></div>
             <button class="whatsapp-btn" onclick="sendWhatsAppOrder(event)">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397 0 11.93 0c3.168.001 6.148 1.233 8.39 3.476 2.242 2.241 3.472 5.221 3.47 8.392-.002 6.582-5.339 11.93-11.87 11.93-2.005-.001-3.973-.51-5.713-1.479L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.725 1.451 5.437 0 9.862-4.386 9.864-9.777.001-2.61-1.015-5.064-2.862-6.912s-4.307-2.863-6.918-2.863c-5.44 0-9.866 4.386-9.867 9.779-.001 1.63.454 3.218 1.316 4.622l-1.01 3.686 3.774-.99z"/></svg>
@@ -437,13 +692,13 @@
 
     <script>
         const productsData = [
-
-
-          {
+            {
                 id: "400808",
                 name: "Ear Buds Compatible OEM Square small",
+                description: "Compact structural build designed for square-type structural configurations. Offers stable impedance alignment.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/400808.png?w=400&auto=format&fit=crop&q=80",
                 inStock: true,
+                popular: true,
                 tiers: [
                     { min: 100, price: "DM Me" },
                     { min: 50, price: 40 },
@@ -451,12 +706,13 @@
                     { min: 1, price: 55 }
                 ]
             },
-
-          {
+            {
                 id: "1054",
                 name: "Ear Buds Round Medum Compatible OEM Battery With Wire",
+                description: "Integrated pre-soldered positive and negative micro-leads. High structural matching for round chassis models.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1054.png?w=400&auto=format&fit=crop&q=80",
                 inStock: true,
+                popular: true,
                 tiers: [
                     { min: 100, price: "DM Me" },
                     { min: 50, price: 45 },
@@ -464,9 +720,10 @@
                     { min: 1, price: 60 }
                 ]
             },
-          {
+            {
                 id: "1040",
                 name: "Ear Buds Round Small Compatible OEM Battery With Wire",
+                description: "Ultra-compact form factor for small-profile modular repairs. Low self-discharge rate with factory leads.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1040.png?w=400&auto=format&fit=crop&q=80",
                 inStock: false,
                 tiers: [
@@ -479,6 +736,7 @@
             {
                 id: "401010",
                 name: "Ear Buds Compatible OEM Square Mini",
+                description: "Micro-miniature profile designed specifically for space-constrained square earbud configurations.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/401010.png?w=400&auto=format&fit=crop&q=80",
                 inStock: false,
                 tiers: [
@@ -491,6 +749,7 @@
             {
                 id: "1154",
                 name: "Ear Buds OEM Compatible Iron Coated Round Medium With Wire High Capacity Battery",
+                description: "Premium puncture-resistant outer iron armor coating. Extra-long continuous play cycle life.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1154.jpg?w=400&auto=format&fit=crop&q=80",
                 inStock: false,
                 tiers: [
@@ -503,7 +762,8 @@
             {
                 id: "1045",
                 name: "Ear Buds Compatible Round Medium High Capacity OEM Battery Without Wire",
-                img: "https://github.com/muhammedhaseeb9645/MH-SPARE-HUB/blob/main/Photo/1045.png?raw=true?w=400&auto=format&fit=crop&q=80",
+                description: "Direct-solder contact pads for customized wiring lengths. Optimised high energy density.",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1045.png?w=400&auto=format&fit=crop&q=80",
                 inStock: false,
                 tiers: [
                     { min: 100, price: "DM Me" },
@@ -515,6 +775,7 @@
             {
                 id: "1240",
                 name: "Ear Buds Compatible Round Medium OEM Battery Without Wire",
+                description: "Standard grade production replacement cell. Reliable power output metrics across normal temperatures.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1240.png?w=400&auto=format&fit=crop&q=80",
                 inStock: false,
                 tiers: [
@@ -527,6 +788,7 @@
             {
                 id: "1140",
                 name: "Ear Buds Compatible Round Medium OEM Battery Without Wire",
+                description: "Balanced energy cell without wire extensions. Excellent structural alignment for standard multi-brand replacements.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1140.png?w=400&auto=format&fit=crop&q=80",
                 inStock: false,
                 tiers: [
@@ -553,31 +815,60 @@
             
             productsData.forEach((product) => {
                 const card = document.createElement('div');
-                card.className = `product-card ${product.inStock ? '' : 'muted'}`;
+                card.className = `product-card`;
                 card.id = `card-${product.id}`;
                 
+                let actionMarkup = '';
+                if (product.inStock) {
+                    actionMarkup = `
+                        <button class="add-btn" onclick="addToCart('${product.id}', false)">Add to Cart</button>
+                    `;
+                } else {
+                    actionMarkup = `
+                        <button class="add-btn out-of-stock" disabled>Out of stock</button>
+                        <button class="prebook-btn" onclick="addToCart('${product.id}', true)">Pre-book Item</button>
+                    `;
+                }
+
                 card.innerHTML = `
                     <div class="image-container">
                         <div class="floating-top-row">
-                            <span class="stock-badge ${product.inStock ? 'status-ready' : 'status-out'}" id="badge-${product.id}">
-                                ${product.inStock ? 'Ready Stock' : 'Out of Stock'}
-                            </span>
                             <div class="floating-meta">
+                                ${product.popular ? '<span class="popular-badge">Popular</span>' : ''}
                                 <span class="product-id">ID: ${product.id}</span>
                             </div>
+                            <span class="stock-badge ${product.inStock ? 'status-ready' : 'status-out'}" id="badge-${product.id}">
+                                ${product.inStock ? 'Ready Stock' : 'Out of stock'}
+                            </span>
                         </div>
                         <img src="${product.img}" alt="${product.name}" class="product-img">
                     </div>
                     <div class="product-info">
                         <h2 class="product-name">${product.name}</h2>
-                        <div class="tier-indicator" id="tier-${product.id}">Standard Retail Tier</div>
-                        <div class="current-unit-price" id="price-view-${product.id}">₹${getUnitPrice(product, 1)}</div>
+                        <p class="product-desc">${product.description || 'Premium OEM grade replacement component.'}</p>
                         
-                        <div class="qty-controls">
-                            <button class="qty-btn" onclick="stepQty('${product.id}', -1)" id="minus-${product.id}" ${!product.inStock ? 'disabled' : ''}>-</button>
-                            <input type="number" class="qty-input" value="1" min="1" id="input-${product.id}" oninput="handleQtyInput('${product.id}')" ${!product.inStock ? 'disabled' : ''}>
-                            <button class="qty-btn" onclick="stepQty('${product.id}', 1)" id="plus-${product.id}" ${!product.inStock ? 'disabled' : ''}>+</button>
-                            <button class="add-btn" onclick="addToCart('${product.id}')" id="add-${product.id}" ${!product.inStock ? 'disabled' : ''}>Add</button>
+                        <div class="tier-indicator" id="tier-${product.id}">Standard Retail Tier</div>
+
+                        <!-- Side-by-Side White Boxes (Price & Quantity) -->
+                        <div class="info-white-box-grid">
+                            <div class="price-white-box">
+                                <div class="box-label">Price</div>
+                                <div class="current-unit-price" id="price-view-${product.id}">₹${getUnitPrice(product, 1)}</div>
+                            </div>
+                            
+                            <!-- New Quantity White Box Container Structure -->
+                            <div class="qty-white-box">
+                                <div class="box-label">Quantity</div>
+                                <div class="qty-controls">
+                                    <button class="qty-btn" onclick="stepQty('${product.id}', -1)" id="minus-${product.id}">-</button>
+                                    <input type="number" class="qty-input" value="1" min="1" id="input-${product.id}" oninput="handleQtyInput('${product.id}')">
+                                    <button class="qty-btn" onclick="stepQty('${product.id}', 1)" id="plus-${product.id}">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="action-layout-block">
+                            ${actionMarkup}
                         </div>
                     </div>
                 `;
@@ -612,32 +903,43 @@
 
             if (uPrice === "DM Me") {
                 priceEl.textContent = "DM Me";
-                tierEl.textContent = "MOQ 100+ Distribution Price";
+                tierEl.textContent = "MOQ 100+ Wholesale Price";
             } else {
-                priceEl.textContent = `₹${uPrice} / pc`;
-                if (qty >= 50) tierEl.textContent = "Wholesale MOQ 50 Rate";
-                else if (qty >= 10) tierEl.textContent = "Wholesale MOQ 10-20 Rate";
+                priceEl.textContent = `₹${uPrice}`;
+                if (qty >= 50) tierEl.textContent = "MOQ 50 Wholesale Rate";
+                else if (qty >= 10) tierEl.textContent = "MOQ 10 Bulk Rate";
                 else tierEl.textContent = "Standard Retail Tier";
             }
         }
 
-        function addToCart(id) {
+        function addToCart(id, isPreBook = false) {
             const prod = productsData.find(p => p.id === id);
             const qty = parseInt(document.getElementById('input-' + id).value) || 1;
             
-            cart[id] = { product: prod, qty: qty };
+            cart[id] = { product: prod, qty: qty, isPreBook: isPreBook };
 
             const headerTotal = document.getElementById('headerTotal');
             headerTotal.classList.add('scale-up');
-            setTimeout(() => headerTotal.classList.remove('scale-up'), 200);
+            setTimeout(() => headerTotal.classList.remove('scale-up'), 250);
 
             updateCartUI();
         }
 
         function removeFromCart(id, event) {
             if (event) event.stopPropagation();
-            delete cart[id];
-            updateCartUI();
+            
+            const itemEl = event.currentTarget.closest('.cart-item');
+            if (itemEl) {
+                itemEl.style.animation = 'slideInRow 0.25s ease reverse forwards';
+                itemEl.style.transformOrigin = 'top';
+                setTimeout(() => {
+                    delete cart[id];
+                    updateCartUI();
+                }, 200);
+            } else {
+                delete cart[id];
+                updateCartUI();
+            }
         }
 
         function updateCartUI() {
@@ -672,9 +974,10 @@
                     <div class="cart-item-info">
                         <h4>${item.product.name}</h4>
                         <p>${item.qty} pcs x ${typeof uPrice === 'number' ? '₹'+uPrice : uPrice}</p>
+                        ${item.isPreBook ? '<span class="cart-item-status">📝 Pre-booked</span>' : ''}
                     </div>
-                    <div style="display:flex; align-items:center; gap: 8px;">
-                        <span style="font-weight:bold; font-size:0.9rem;">${rowPriceText}</span>
+                    <div class="cart-item-price">${rowPriceText}</div>
+                    <div class="cart-item-actions">
                         <button class="remove-item" onclick="removeFromCart('${id}', event)">✕</button>
                     </div>
                 `;
@@ -712,7 +1015,9 @@
             Object.keys(cart).forEach((id, index) => {
                 const item = cart[id];
                 const uPrice = getUnitPrice(item.product, item.qty);
-                message += `*${index + 1}. ${item.product.name}*\n`;
+                const orderTypeTag = item.isPreBook ? " 📝 *[PRE-BOOKED]*" : "";
+                
+                message += `*${index + 1}. ${item.product.name}*${orderTypeTag}\n`;
                 message += `   ID: ${id}\n`;
                 message += `   Qty: ${item.qty} pcs\n`;
                 
