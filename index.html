@@ -44,11 +44,10 @@
         .logo-container {
             display: flex;
             align-items: center;
-            max-height: 50px;
+            height: 50px;
             position: relative;
-            overflow: hidden;
-            padding: 4px 8px;
-            border-radius: 8px;
+            overflow: visible;
+            padding: 4px 0;
         }
 
         .brand-logo {
@@ -61,13 +60,12 @@
             animation: logoPulse 3s ease-in-out infinite;
         }
 
-        /* Ambient tech sweep sheen overlay */
         .logo-container::after {
             content: '';
             position: absolute;
             top: 0;
             left: -150%;
-            width: 50%;
+            width: 30%;
             height: 100%;
             background: linear-gradient(
                 90deg, 
@@ -80,23 +78,18 @@
             transform: skewX(-25deg);
             z-index: 3;
             animation: techSweep 4.5s infinite ease-in-out;
+            pointer-events: none;
         }
 
-        /* Keyframes for speed & power glow */
         @keyframes logoPulse {
-            0%, 100% {
-                filter: drop-shadow(0 0 2px rgba(0, 210, 255, 0.4)) brightness(1);
-            }
-            50% {
-                filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.85)) brightness(1.08);
-            }
+            0%, 100% { filter: drop-shadow(0 0 2px rgba(0, 210, 255, 0.3)) brightness(1); }
+            50% { filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.7)) brightness(1.05); }
         }
 
         @keyframes techSweep {
-            0% { left: -150%; }
-            30%, 100% { left: 150%; }
+            0% { left: -50%; }
+            30%, 100% { left: 120%; }
         }
-        /* -------------------------------- */
 
         .header-total-panel {
             background: var(--dark);
@@ -134,87 +127,125 @@
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             display: flex;
             flex-direction: column;
+            border: 1px solid #e2e8f0;
         }
 
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #cbd5e1;
         }
 
+        .product-card.muted {
+            opacity: 0.65;
+        }
+
+        /* --- Full Screen Borderless Image View Window --- */
         .image-container {
             width: 100%;
-            height: 180px;
-            background: #e2e8f0;
+            height: 240px;
+            background: #cbd5e1;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow: hidden;
         }
 
         .product-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .stock-badge {
+        .product-card:hover .product-img {
+            transform: scale(1.06);
+        }
+
+        /* Translucent floating meta overlays */
+        .floating-top-row {
             position: absolute;
             top: 12px;
             left: 12px;
+            right: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .stock-badge {
             padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: bold;
             color: white;
             text-transform: uppercase;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            transition: background-color 0.2s ease;
         }
 
         .status-ready { background-color: var(--success); }
+        .status-out { background-color: var(--danger); }
+
+        .floating-meta {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .product-id {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            letter-spacing: 0.5px;
+        }
 
         .product-info {
-            padding: 15px;
+            padding: 20px 16px 16px 16px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
         }
 
-        .product-id {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-bottom: 4px;
-        }
-
         .product-name {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 700;
             height: 44px;
             overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            margin-bottom: 10px;
-            line-height: 1.3;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            color: var(--dark);
         }
 
         .tier-indicator {
             background: #f8fafc;
             border: 1px dashed #cbd5e1;
-            padding: 8px;
+            padding: 8px 12px;
             border-radius: 8px;
             font-size: 0.8rem;
             margin-bottom: 15px;
+            color: #475569;
+            font-weight: 500;
         }
 
         .current-unit-price {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: var(--primary);
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .qty-controls {
@@ -237,6 +268,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .qty-btn:hover:not(:disabled) {
+            background: #cbd5e1;
         }
 
         .qty-input {
@@ -258,6 +294,16 @@
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .add-btn:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+
+        .qty-btn:disabled, .qty-input:disabled, .add-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
 
         .cart-panel {
@@ -279,14 +325,8 @@
             margin-bottom: 15px;
         }
 
-        .cart-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .toggle-icon {
-            display: none;
-        }
+        .cart-title { font-size: 1.1rem; font-weight: 700; }
+        .toggle-icon { display: none; }
 
         .cart-items-list {
             max-height: 350px;
@@ -310,10 +350,7 @@
             text-overflow: ellipsis;
         }
 
-        .cart-item-info p {
-            font-size: 0.8rem;
-            color: #64748b;
-        }
+        .cart-item-info p { font-size: 0.8rem; color: #64748b; }
 
         .remove-item {
             color: var(--danger);
@@ -330,9 +367,7 @@
             transition: background 0.2s;
         }
 
-        .remove-item:hover {
-            background: #fca5a5;
-        }
+        .remove-item:hover { background: #fca5a5; }
 
         .whatsapp-btn {
             width: 100%;
@@ -351,25 +386,12 @@
         }
 
         @media (max-width: 900px) {
-            body {
-                padding-bottom: 85px;
-            }
-
-            .brand-logo {
-                height: 35px;
-            }
-
-            .container {
-                grid-template-columns: 1fr;
-                margin-top: 10px;
-            }
-
+            body { padding-bottom: 85px; }
+            .brand-logo { height: 35px; }
+            .container { grid-template-columns: 1fr; margin-top: 10px; }
             .cart-panel {
                 position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                top: auto;
+                bottom: 0; left: 0; right: 0; top: auto;
                 border-radius: 16px 16px 0 0;
                 box-shadow: 0 -8px 24px rgba(0,0,0,0.12);
                 z-index: 1000;
@@ -378,41 +400,13 @@
                 transform: translateY(calc(100% - 62px));
                 transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             }
-
-            .cart-panel.open {
-                transform: translateY(0);
-            }
-
-            .cart-toggle-header {
-                border-bottom: none;
-                margin-bottom: 0;
-                padding-bottom: 0;
-            }
-
-            .cart-panel.open .cart-toggle-header {
-                border-bottom: 2px solid #f1f5f9;
-                padding-bottom: 10px;
-                margin-bottom: 15px;
-            }
-
-            .toggle-icon {
-                display: block;
-                font-size: 0.9rem;
-                transition: transform 0.3s ease;
-            }
-
-            .cart-panel.open .toggle-icon {
-                transform: rotate(180deg);
-            }
-
-            .cart-items-list {
-                display: none;
-                max-height: 240px;
-            }
-
-            .cart-panel.open .cart-items-list {
-                display: block;
-            }
+            .cart-panel.open { transform: translateY(0); }
+            .cart-toggle-header { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+            .cart-panel.open .cart-toggle-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px; }
+            .toggle-icon { display: block; font-size: 0.9rem; transition: transform 0.3s ease; }
+            .cart-panel.open .toggle-icon { transform: rotate(180deg); }
+            .cart-items-list { display: none; max-height: 240px; }
+            .cart-panel.open .cart-items-list { display: block; }
         }
     </style>
 </head>
@@ -420,7 +414,7 @@
 
     <header>
         <div class="logo-container">
-            <img src="https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/logo/file_00000000413c7206b2e98adbdf5393bb.png" alt="" class="brand-logo">
+            <img src="file_00000000413c7206b2e98adbdf5393bb.png" alt="MH SPARE HUB" class="brand-logo">
         </div>
         <div class="header-total-panel" id="headerTotal">Total: ₹0</div>
     </header>
@@ -446,7 +440,8 @@
             {
                 id: "401010",
                 name: "Ear Buds Compatible OEM Square Mini",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/IMG-20260616-WA0670.jpg?w=300&auto=format&fit=crop&q=60",
+                img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&auto=format&fit=crop&q=80",
+                inStock: true,
                 tiers: [
                     { min: 100, price: "DM Me" },
                     { min: 50, price: 40 },
@@ -457,7 +452,8 @@
             {
                 id: "1154",
                 name: "Ear Buds OEM Compatible Iron Coated Round Medium With Wire High Capacity Battery",
-                img: "https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=300&auto=format&fit=crop&q=60",
+                img: "https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=400&auto=format&fit=crop&q=80",
+                inStock: true,
                 tiers: [
                     { min: 100, price: "DM Me" },
                     { min: 50, price: 45 },
@@ -468,7 +464,8 @@
             {
                 id: "1045",
                 name: "Ear Buds Compatible Round Medium High Capacity OEM Battery Without Wire",
-                img: "https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=300&auto=format&fit=crop&q=60",
+                img: "https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=400&auto=format&fit=crop&q=80",
+                inStock: true,
                 tiers: [
                     { min: 100, price: "DM Me" },
                     { min: 50, price: 45 },
@@ -479,7 +476,8 @@
             {
                 id: "1240",
                 name: "Ear Buds Compatible Round Medium OEM Battery Without Wire",
-                img: "https://images.unsplash.com/photo-1577174881658-0f30ed549adc?w=300&auto=format&fit=crop&q=60",
+                img: "https://images.unsplash.com/photo-1577174881658-0f30ed549adc?w=400&auto=format&fit=crop&q=80",
+                inStock: true,
                 tiers: [
                     { min: 100, price: "DM Me" },
                     { min: 50, price: 48 },
@@ -490,7 +488,8 @@
             {
                 id: "1140",
                 name: "Ear Buds Compatible Round Medium OEM Battery Without Wire",
-                img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=300&auto=format&fit=crop&q=60",
+                img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&auto=format&fit=crop&q=80",
+                inStock: true,
                 tiers: [
                     { min: 100, price: "DM Me" },
                     { min: 50, price: 45 },
@@ -515,25 +514,31 @@
             
             productsData.forEach((product) => {
                 const card = document.createElement('div');
-                card.className = 'product-card';
+                card.className = `product-card ${product.inStock ? '' : 'muted'}`;
                 card.id = `card-${product.id}`;
                 
                 card.innerHTML = `
                     <div class="image-container">
+                        <div class="floating-top-row">
+                            <span class="stock-badge ${product.inStock ? 'status-ready' : 'status-out'}" id="badge-${product.id}">
+                                ${product.inStock ? 'Ready Stock' : 'Out of Stock'}
+                            </span>
+                            <div class="floating-meta">
+                                <span class="product-id">ID: ${product.id}</span>
+                            </div>
+                        </div>
                         <img src="${product.img}" alt="${product.name}" class="product-img">
-                        <span class="stock-badge status-ready">Ready Stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-id">ID: ${product.id}</span>
                         <h2 class="product-name">${product.name}</h2>
                         <div class="tier-indicator" id="tier-${product.id}">Standard Retail Tier</div>
                         <div class="current-unit-price" id="price-view-${product.id}">₹${getUnitPrice(product, 1)}</div>
                         
-                        <div class="qty-controls" onclick="event.stopPropagation();">
-                            <button class="qty-btn" onclick="stepQty('${product.id}', -1)">-</button>
-                            <input type="number" class="qty-input" value="1" min="1" id="input-${product.id}" oninput="handleQtyInput('${product.id}')">
-                            <button class="qty-btn" onclick="stepQty('${product.id}', 1)">+</button>
-                            <button class="add-btn" onclick="addToCart('${product.id}')">Add</button>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="stepQty('${product.id}', -1)" id="minus-${product.id}" ${!product.inStock ? 'disabled' : ''}>-</button>
+                            <input type="number" class="qty-input" value="1" min="1" id="input-${product.id}" oninput="handleQtyInput('${product.id}')" ${!product.inStock ? 'disabled' : ''}>
+                            <button class="qty-btn" onclick="stepQty('${product.id}', 1)" id="plus-${product.id}" ${!product.inStock ? 'disabled' : ''}>+</button>
+                            <button class="add-btn" onclick="addToCart('${product.id}')" id="add-${product.id}" ${!product.inStock ? 'disabled' : ''}>Add</button>
                         </div>
                     </div>
                 `;
@@ -543,7 +548,7 @@
         }
 
         function stepQty(id, change) {
-            const input = document.getElementById(`input-${id}`);
+            const input = document.getElementById('input-' + id);
             let val = parseInt(input.value) || 1;
             val += change;
             if (val < 1) val = 1;
@@ -552,7 +557,7 @@
         }
 
         function handleQtyInput(id) {
-            const input = document.getElementById(`input-${id}`);
+            const input = document.getElementById('input-' + id);
             let val = parseInt(input.value);
             if (isNaN(val) || val < 1) val = 1;
             updatePriceDisplay(id, val);
@@ -560,7 +565,7 @@
 
         function updatePriceDisplay(id, qty = null) {
             const prod = productsData.find(p => p.id === id);
-            if (!qty) qty = parseInt(document.getElementById(`input-${id}`).value) || 1;
+            if (!qty) qty = parseInt(document.getElementById('input-' + id).value) || 1;
             
             const uPrice = getUnitPrice(prod, qty);
             const priceEl = document.getElementById('price-view-' + id);
@@ -579,7 +584,7 @@
 
         function addToCart(id) {
             const prod = productsData.find(p => p.id === id);
-            const qty = parseInt(document.getElementById(`input-${id}`).value) || 1;
+            const qty = parseInt(document.getElementById('input-' + id).value) || 1;
             
             cart[id] = { product: prod, qty: qty };
 
@@ -629,7 +634,7 @@
                         <h4>${item.product.name}</h4>
                         <p>${item.qty} pcs x ${typeof uPrice === 'number' ? '₹'+uPrice : uPrice}</p>
                     </div>
-                    <div style="display:flex; align-items:center; gap: 8px;" onclick="event.stopPropagation();">
+                    <div style="display:flex; align-items:center; gap: 8px;">
                         <span style="font-weight:bold; font-size:0.9rem;">${rowPriceText}</span>
                         <button class="remove-item" onclick="removeFromCart('${id}', event)">✕</button>
                     </div>
