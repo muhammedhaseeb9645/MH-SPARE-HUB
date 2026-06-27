@@ -169,6 +169,90 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
 
+        /* --- Advanced Search Box Styles --- */
+        .search-control-hub {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .search-input-wrapper svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .advanced-search-box {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            font-size: 0.95rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background-color: #f8fafc;
+            color: var(--dark);
+            transition: all 0.3s var(--ease-smooth);
+        }
+
+        .advanced-search-box:focus {
+            outline: none;
+            background-color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        }
+
+        .filter-toggle-group {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            gap: 4px;
+        }
+
+        .filter-toggle-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-toggle-btn.active {
+            background: white;
+            color: var(--dark);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+
+        /* --- Dynamic Green Text Highlighter --- */
+        .search-match-highlight {
+            background-color: #22c55e !important; /* Bright Green */
+            color: #ffffff !important;
+            padding: 1px 3px;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(34, 197, 94, 0.4);
+        }
+
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -696,6 +780,9 @@
             
             .cart-items-list { display: none; max-height: 240px; }
             .cart-panel.open .cart-items-list { display: block; }
+            
+            .search-control-hub { flex-direction: column; align-items: stretch; }
+            .search-input-wrapper { min-width: 100%; }
         }
     </style>
 </head>
@@ -716,7 +803,22 @@
     </nav>
 
     <div class="container">
-        <main class="products-grid" id="productsGrid"></main>
+        <div class="main-content-stream">
+            <!-- Advanced Search Control Hub Module -->
+            <div class="search-control-hub">
+                <div class="search-input-wrapper">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" class="advanced-search-box" id="advancedSearchInput" placeholder="Search by exact Product ID or spare parts name..." oninput="executeSearchAndFilters()">
+                </div>
+                <div class="filter-toggle-group">
+                    <button class="filter-toggle-btn active" onclick="toggleStockFilter('all', this)">All Stock</button>
+                    <button class="filter-toggle-btn" onclick="toggleStockFilter('ready', this)">Ready Stock</button>
+                    <button class="filter-toggle-btn" onclick="toggleStockFilter('out', this)">Out of Stock</button>
+                </div>
+            </div>
+
+            <main class="products-grid" id="productsGrid"></main>
+        </div>
 
         <aside class="cart-panel" id="cartPanel" onclick="handlePanelClick(event)">
             <div class="cart-toggle-header" style="cursor: pointer;" onclick="toggleMobileCart(event)">
@@ -885,7 +987,8 @@
         ];
 
         let cart = {};
-        let currentFilter = 'all';
+        let currentCategoryFilter = 'all';
+        let currentStockFilter = 'all';
 
         function getUnitPrice(product, qty) {
             for (let tier of product.tiers) {
@@ -898,20 +1001,64 @@
             renderGrid();
         }
 
+        function executeSearchAndFilters() {
+            renderGrid();
+        }
+
+        function toggleStockFilter(filterMode, element) {
+            currentStockFilter = filterMode;
+            document.querySelectorAll('.filter-toggle-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            renderGrid();
+        }
+
+        /* Helper function to escape special characters for regex match injection */
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        /* Highlighting Engine: Wraps target match groups with green styled spans */
+        function highlightText(sourceText, keyword) {
+            if (!keyword) return sourceText;
+            const escapedKeyword = escapeRegExp(keyword);
+            const regex = new RegExp(`(${escapedKeyword})`, 'gi');
+            return sourceText.replace(regex, `<span class="search-match-highlight">$1</span>`);
+        }
+
         function renderGrid() {
             const grid = document.getElementById('productsGrid');
+            const searchKeyword = document.getElementById('advancedSearchInput').value.trim();
+            const searchKeywordLower = searchKeyword.toLowerCase();
             grid.innerHTML = '';
             
-            const filteredProducts = currentFilter === 'all' 
-                ? productsData 
-                : productsData.filter(p => p.category === currentFilter);
+            let processedProducts = productsData;
 
-            if(filteredProducts.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px; font-weight: bold;">No products in this section yet.</div>`;
+            // 1. Filter by category
+            if (currentCategoryFilter !== 'all') {
+                processedProducts = processedProducts.filter(p => p.category === currentCategoryFilter);
+            }
+
+            // 2. Filter by stock configuration 
+            if (currentStockFilter === 'ready') {
+                processedProducts = processedProducts.filter(p => p.inStock === true);
+            } else if (currentStockFilter === 'out') {
+                processedProducts = processedProducts.filter(p => p.inStock === false);
+            }
+
+            // 3. String lookup matching
+            if (searchKeywordLower !== '') {
+                processedProducts = processedProducts.filter(p => 
+                    p.name.toLowerCase().includes(searchKeywordLower) || 
+                    p.id.toLowerCase().includes(searchKeywordLower)
+                );
+            }
+
+            if(processedProducts.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px; font-weight: bold;">No parts or products match your search settings.</div>`;
                 return;
             }
 
-            filteredProducts.forEach((product) => {
+            processedProducts.forEach((product) => {
                 const card = document.createElement('div');
                 card.className = `product-card`;
                 card.id = `card-${product.id}`;
@@ -930,12 +1077,16 @@
 
                 const existingQty = cart[product.id] ? cart[product.id].qty : 1;
 
+                // Apply real-time green highlights to matching text strings
+                const displayedName = highlightText(product.name, searchKeyword);
+                const displayedID = highlightText(product.id, searchKeyword);
+
                 card.innerHTML = `
                     <div class="image-container">
                         <div class="floating-top-row">
                             <div class="floating-meta">
                                 ${product.popular ? '<span class="popular-badge">Popular</span>' : ''}
-                                <span class="product-id">ID: ${product.id}</span>
+                                <span class="product-id">ID: ${displayedID}</span>
                             </div>
                             <span class="stock-badge ${product.inStock ? 'status-ready' : 'status-out'}" id="badge-${product.id}">
                                 ${product.inStock ? 'Ready Stock' : 'Out of stock'}
@@ -944,7 +1095,7 @@
                         <img src="${product.img}" alt="${product.name}" class="product-img">
                     </div>
                     <div class="product-info">
-                        <h2 class="product-name">${product.name}</h2>
+                        <h2 class="product-name">${displayedName}</h2>
                         <p class="product-desc">${product.description || 'Premium OEM grade replacement component.'}</p>
                         
                         <div class="tier-indicator" id="tier-${product.id}">Standard Retail Tier</div>
@@ -976,7 +1127,7 @@
         }
 
         function filterCategory(categoryKey, tabBtn) {
-            currentFilter = categoryKey;
+            currentCategoryFilter = categoryKey;
             document.querySelectorAll('.category-tab').forEach(btn => btn.classList.remove('active'));
             tabBtn.classList.add('active');
             renderGrid();
@@ -1006,7 +1157,6 @@
             const priceEl = document.getElementById('price-view-' + id);
             const tierEl = document.getElementById('tier-' + id);
 
-            /* BUG FIX: Added DOM protection wrapper to prevent reference errors during filter switching */
             if (!priceEl) return; 
 
             if (uPrice === "DM Me") {
