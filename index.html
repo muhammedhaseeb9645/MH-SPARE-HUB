@@ -117,6 +117,58 @@
             box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
         }
 
+        /* --- Category Folder Navigation --- */
+        .category-nav-wrapper {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 20px;
+            position: sticky;
+            top: 65px; 
+            z-index: 90;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .category-nav-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+        .category-nav-wrapper {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .category-tab {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            padding: 8px 20px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-smooth);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-tab:hover {
+            background: #e2e8f0;
+            color: var(--dark);
+            transform: translateY(-1px);
+        }
+
+        .category-tab.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -145,7 +197,6 @@
             will-change: transform, box-shadow;
         }
 
-        /* --- Dynamic Card Metallic Shine Overlays --- */
         .product-card::before {
             content: '';
             position: absolute;
@@ -172,7 +223,6 @@
             border-color: #cbd5e1;
         }
 
-        /* --- Full Screen Borderless Image View Window --- */
         .image-container {
             width: 100%;
             height: 240px;
@@ -193,7 +243,6 @@
             transform: scale(1.08);
         }
 
-        /* Translucent floating meta overlays */
         .floating-top-row {
             position: absolute;
             top: 12px;
@@ -243,7 +292,6 @@
             background: rgba(15, 23, 42, 0.85);
         }
 
-        /* --- PREMIUM POPULAR BADGE SYSTEM --- */
         .popular-badge {
             background: linear-gradient(135deg, #ff9d00, #f59e0b);
             color: #0f172a;
@@ -305,7 +353,6 @@
             color: var(--dark);
         }
 
-        /* --- Light Red Description Container Box --- */
         .product-desc {
             font-size: 0.8rem;
             color: #7f1d1d; 
@@ -332,7 +379,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* --- Clean Grid Side-By-Side White Boxes --- */
         .info-white-box-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -373,7 +419,6 @@
             transform: scale(1.05);
         }
 
-        /* --- Realigned Layout Controls Container --- */
         .action-layout-block {
             display: flex;
             flex-direction: column;
@@ -400,7 +445,6 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
 
-        /* Out of Stock Style Button Indicator */
         .add-btn.out-of-stock {
             background: #cbd5e1;
             color: #64748b;
@@ -411,7 +455,6 @@
             box-shadow: none;
         }
 
-        /* --- PRE-BOOKING BUTTON SYSTEM --- */
         .prebook-btn {
             width: 100%;
             height: 42px;
@@ -435,7 +478,6 @@
             transform: scale(0.97);
         }
 
-        /* Quantity Adjustment styling inside its White Box wrapper */
         .qty-controls {
             display: flex;
             align-items: center;
@@ -484,7 +526,6 @@
             outline: none;
         }
 
-        /* Strip Native Arrows */
         .qty-input::-webkit-outer-spin-button,
         .qty-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -498,7 +539,7 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
             height: fit-content;
             position: sticky;
-            top: 90px;
+            top: 140px; 
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
         }
 
@@ -514,7 +555,6 @@
         .cart-title { font-size: 1.1rem; font-weight: 700; }
         .toggle-icon { display: none; }
 
-        /* --- Cart Header Column Labels --- */
         .cart-table-header {
             display: grid;
             grid-template-columns: 1fr 90px 40px;
@@ -571,7 +611,6 @@
             margin-top: 2px;
         }
 
-        /* Total Price Column styling */
         .cart-item-price {
             font-weight: bold;
             font-size: 0.9rem;
@@ -632,6 +671,8 @@
         @media (max-width: 900px) {
             body { padding-bottom: 85px; }
             .brand-logo { height: 35px; }
+            .category-nav-wrapper { top: 55px; padding: 8px 10px; justify-content: flex-start; }
+            .category-tab { padding: 6px 14px; font-size: 0.8rem; }
             .container { grid-template-columns: 1fr; margin-top: 10px; }
             .cart-panel {
                 position: fixed;
@@ -667,6 +708,13 @@
         <div class="header-total-panel" id="headerTotal">Total: ₹0</div>
     </header>
 
+    <nav class="category-nav-wrapper">
+        <button class="category-tab active" onclick="filterCategory('all', this)">📁 All Products</button>
+        <button class="category-tab" onclick="filterCategory('tws-battery', this)">🔋 TWS Battery</button>
+        <button class="category-tab" onclick="filterCategory('apple', this)">🍏 Apple</button>
+        <button class="category-tab" onclick="filterCategory('gaming-console', this)">🎮 Gaming Console</button>
+    </nav>
+
     <div class="container">
         <main class="products-grid" id="productsGrid"></main>
 
@@ -694,6 +742,7 @@
         const productsData = [
             {
                 id: "400808",
+                category: "tws-battery",
                 name: "Ear Buds Compatible OEM Square small",
                 description: "Compact structural build designed for square-type structural configurations. Offers stable impedance alignment.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/400808.png?w=400&auto=format&fit=crop&q=80",
@@ -708,6 +757,7 @@
             },
             {
                 id: "1054",
+                category: "tws-battery",
                 name: "Ear Buds Round Medum Compatible OEM Battery With Wire",
                 description: "Integrated pre-soldered positive and negative micro-leads. High structural matching for round chassis models.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1054.png?w=400&auto=format&fit=crop&q=80",
@@ -722,9 +772,10 @@
             },
             {
                 id: "1040",
+                category: "tws-battery",
                 name: "Ear Buds Round Small Compatible OEM Battery With Wire",
                 description: "Ultra-compact form factor for small-profile modular repairs. Low self-discharge rate with factory leads.",
-                img: "1040.png?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1040.png?w=400&auto=format&fit=crop&q=80",
                 inStock: false,
                 tiers: [
                     { min: 100, price: "DM Me" },
@@ -735,6 +786,7 @@
             },
             {
                 id: "401010",
+                category: "tws-battery",
                 name: "Ear Buds Compatible OEM Square Mini",
                 description: "Micro-miniature profile designed specifically for space-constrained square earbud configurations.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/401010.png?w=400&auto=format&fit=crop&q=80",
@@ -748,6 +800,7 @@
             },
             {
                 id: "1154",
+                category: "tws-battery",
                 name: "Ear Buds OEM Compatible Iron Coated Round Medium With Wire High Capacity Battery",
                 description: "Premium puncture-resistant outer iron armor coating. Extra-long continuous play cycle life.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1154.jpg?w=400&auto=format&fit=crop&q=80",
@@ -761,6 +814,7 @@
             },
             {
                 id: "1045",
+                category: "tws-battery",
                 name: "Ear Buds Compatible Round Medium High Capacity OEM Battery Without Wire",
                 description: "Direct-solder contact pads for customized wiring lengths. Optimised high energy density.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1045.png?w=400&auto=format&fit=crop&q=80",
@@ -774,6 +828,7 @@
             },
             {
                 id: "1240",
+                category: "tws-battery",
                 name: "Ear Buds Compatible Round Medium OEM Battery Without Wire",
                 description: "Standard grade production replacement cell. Reliable power output metrics across normal temperatures.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1240.png?w=400&auto=format&fit=crop&q=80",
@@ -787,6 +842,7 @@
             },
             {
                 id: "1140",
+                category: "tws-battery",
                 name: "Ear Buds Compatible Round Medium OEM Battery Without Wire",
                 description: "Balanced energy cell without wire extensions. Excellent structural alignment for standard multi-brand replacements.",
                 img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1140.png?w=400&auto=format&fit=crop&q=80",
@@ -797,10 +853,35 @@
                     { min: 10, price: 55 },
                     { min: 1, price: 60 }
                 ]
+            },
+            {
+                id: "AP-001",
+                category: "apple",
+                name: "AirPods Pro Gen 2 OEM Charging Case",
+                description: "Premium replacement charging case module with wireless alignment chips.",
+                img: "https://images.unsplash.com/photo-1588449668338-d134ae7f3630?w=400&auto=format&fit=crop&q=80",
+                inStock: true,
+                tiers: [
+                    { min: 10, price: 450 },
+                    { min: 1, price: 600 }
+                ]
+            },
+            {
+                id: "GC-001",
+                category: "gaming-console",
+                name: "PS5 DualSense OEM Analogue Joystick",
+                description: "High accuracy ALPS potentiometer replacement core to eliminate stick drift vectors.",
+                img: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&auto=format&fit=crop&q=80",
+                inStock: true,
+                tiers: [
+                    { min: 50, price: 85 },
+                    { min: 1, price: 150 }
+                ]
             }
         ];
 
         let cart = {};
+        let currentFilter = 'all';
 
         function getUnitPrice(product, qty) {
             for (let tier of product.tiers) {
@@ -810,10 +891,23 @@
         }
 
         function initPOS() {
+            renderGrid();
+        }
+
+        function renderGrid() {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
             
-            productsData.forEach((product) => {
+            const filteredProducts = currentFilter === 'all' 
+                ? productsData 
+                : productsData.filter(p => p.category === currentFilter);
+
+            if(filteredProducts.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px; font-weight: bold;">No products in this section yet.</div>`;
+                return;
+            }
+
+            filteredProducts.forEach((product) => {
                 const card = document.createElement('div');
                 card.className = `product-card`;
                 card.id = `card-${product.id}`;
@@ -829,6 +923,8 @@
                         <button class="prebook-btn" onclick="addToCart('${product.id}', true)">Pre-book Item</button>
                     `;
                 }
+
+                const existingQty = cart[product.id] ? cart[product.id].qty : 1;
 
                 card.innerHTML = `
                     <div class="image-container">
@@ -849,19 +945,17 @@
                         
                         <div class="tier-indicator" id="tier-${product.id}">Standard Retail Tier</div>
 
-                        <!-- Side-by-Side White Boxes (Price & Quantity) -->
                         <div class="info-white-box-grid">
                             <div class="price-white-box">
                                 <div class="box-label">Price</div>
-                                <div class="current-unit-price" id="price-view-${product.id}">₹${getUnitPrice(product, 1)}</div>
+                                <div class="current-unit-price" id="price-view-${product.id}">₹${getUnitPrice(product, existingQty)}</div>
                             </div>
                             
-                            <!-- New Quantity White Box Container Structure -->
                             <div class="qty-white-box">
                                 <div class="box-label">Quantity</div>
                                 <div class="qty-controls">
                                     <button class="qty-btn" onclick="stepQty('${product.id}', -1)" id="minus-${product.id}">-</button>
-                                    <input type="number" class="qty-input" value="1" min="1" id="input-${product.id}" oninput="handleQtyInput('${product.id}')">
+                                    <input type="number" class="qty-input" value="${existingQty}" min="1" id="input-${product.id}" oninput="handleQtyInput('${product.id}')">
                                     <button class="qty-btn" onclick="stepQty('${product.id}', 1)" id="plus-${product.id}">+</button>
                                 </div>
                             </div>
@@ -873,8 +967,15 @@
                     </div>
                 `;
                 grid.appendChild(card);
-                updatePriceDisplay(product.id);
+                updatePriceDisplay(product.id, existingQty);
             });
+        }
+
+        function filterCategory(categoryKey, tabBtn) {
+            currentFilter = categoryKey;
+            document.querySelectorAll('.category-tab').forEach(btn => btn.classList.remove('active'));
+            tabBtn.classList.add('active');
+            renderGrid();
         }
 
         function stepQty(id, change) {
@@ -900,6 +1001,9 @@
             const uPrice = getUnitPrice(prod, qty);
             const priceEl = document.getElementById('price-view-' + id);
             const tierEl = document.getElementById('tier-' + id);
+
+            /* BUG FIX: Added DOM protection wrapper to prevent reference errors during filter switching */
+            if (!priceEl) return; 
 
             if (uPrice === "DM Me") {
                 priceEl.textContent = "DM Me";
