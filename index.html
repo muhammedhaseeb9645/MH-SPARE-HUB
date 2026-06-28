@@ -278,6 +278,7 @@
             display: flex;
             flex-direction: column;
             border: 1px solid #e2e8f0;
+            cursor: pointer;
             will-change: transform, box-shadow;
         }
 
@@ -752,6 +753,152 @@
             transform: scale(0.98);
         }
 
+        /* --- Global Product Quick View Modal System --- */
+        .product-view-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s var(--ease-smooth);
+            padding: 20px;
+        }
+
+        .product-view-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .product-view-modal {
+            background: white;
+            width: 100%;
+            max-width: 750px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.4s var(--ease-elastic);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .product-view-overlay.active .product-view-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: var(--dark);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            background: #f1f5f9;
+            transform: scale(1.05);
+        }
+
+        .modal-image-pane {
+            background: #cbd5e1;
+            position: relative;
+            height: 100%;
+            min-height: 380px;
+        }
+
+        .modal-display-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-body-pane {
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #ffffff;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .modal-product-header {
+            margin-bottom: 16px;
+        }
+
+        .modal-product-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.3;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+
+        .modal-product-desc {
+            font-size: 0.88rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .modal-tiers-wrapper {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .modal-tiers-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-tier-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            padding: 4px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            color: #334155;
+        }
+
+        .modal-tier-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal-tier-item.highlight-tier {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
         @media (max-width: 900px) {
             body { padding-bottom: 85px; }
             .brand-logo { height: 35px; }
@@ -783,6 +930,21 @@
             
             .search-control-hub { flex-direction: column; align-items: stretch; }
             .search-input-wrapper { min-width: 100%; }
+
+            /* Modal Responsive Adjustments */
+            .product-view-modal {
+                grid-template-columns: 1fr;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            .modal-image-pane {
+                min-height: 200px;
+                height: 200px;
+            }
+            .modal-body-pane {
+                padding: 20px 16px;
+                max-height: none;
+            }
         }
     </style>
 </head>
@@ -804,7 +966,6 @@
 
     <div class="container">
         <div class="main-content-stream">
-            <!-- Advanced Search Control Hub Module -->
             <div class="search-control-hub">
                 <div class="search-input-wrapper">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -838,6 +999,51 @@
                 Order via WhatsApp
             </button>
         </aside>
+    </div>
+
+    <div class="product-view-overlay" id="productViewOverlay" onclick="closeProductModal()">
+        <div class="product-view-modal" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeProductModal()">✕</button>
+            <div class="modal-image-pane">
+                <div class="floating-top-row">
+                    <div class="floating-meta">
+                        <span class="product-id" id="modalProductId">ID: 0000</span>
+                    </div>
+                    <span class="stock-badge" id="modalStockBadge">Stock</span>
+                </div>
+                <img src="" alt="" class="modal-display-img" id="modalDisplayImg">
+            </div>
+            <div class="modal-body-pane">
+                <div class="modal-product-header">
+                    <div class="tier-indicator" id="modalTierIndicator">Standard Retail Tier</div>
+                    <h2 class="modal-product-title" id="modalProductTitle">Product Title</h2>
+                    <p class="modal-product-desc" id="modalProductDesc">Product detailed specs configuration description...</p>
+                    
+                    <div class="modal-tiers-wrapper">
+                        <div class="modal-tiers-title">Wholesale Rate Tiers</div>
+                        <div id="modalTiersContainer"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="info-white-box-grid" style="margin-bottom: 16px;">
+                        <div class="price-white-box">
+                            <div class="box-label">Calculated Price</div>
+                            <div class="current-unit-price" id="modalPriceView">₹0</div>
+                        </div>
+                        <div class="qty-white-box">
+                            <div class="box-label">Order Qty</div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" id="modalMinusBtn">-</button>
+                                <input type="number" class="qty-input" value="1" min="1" id="modalQtyInput">
+                                <button class="qty-btn" id="modalPlusBtn">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-layout-block" id="modalActionBlock"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1012,12 +1218,10 @@
             renderGrid();
         }
 
-        /* Helper function to escape special characters for regex match injection */
         function escapeRegExp(string) {
             return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
-        /* Highlighting Engine: Wraps target match groups with green styled spans */
         function highlightText(sourceText, keyword) {
             if (!keyword) return sourceText;
             const escapedKeyword = escapeRegExp(keyword);
@@ -1033,19 +1237,16 @@
             
             let processedProducts = productsData;
 
-            // 1. Filter by category
             if (currentCategoryFilter !== 'all') {
                 processedProducts = processedProducts.filter(p => p.category === currentCategoryFilter);
             }
 
-            // 2. Filter by stock configuration 
             if (currentStockFilter === 'ready') {
                 processedProducts = processedProducts.filter(p => p.inStock === true);
             } else if (currentStockFilter === 'out') {
                 processedProducts = processedProducts.filter(p => p.inStock === false);
             }
 
-            // 3. String lookup matching
             if (searchKeywordLower !== '') {
                 processedProducts = processedProducts.filter(p => 
                     p.name.toLowerCase().includes(searchKeywordLower) || 
@@ -1063,6 +1264,13 @@
                 card.className = `product-card`;
                 card.id = `card-${product.id}`;
                 
+                // Open modal on layout card click, unless button controls are focused
+                card.onclick = (e) => {
+                    if (!e.target.closest('.qty-btn') && !e.target.closest('.qty-input') && !e.target.closest('.add-btn') && !e.target.closest('.prebook-btn')) {
+                        openProductModal(product.id);
+                    }
+                };
+                
                 let actionMarkup = '';
                 if (product.inStock) {
                     actionMarkup = `
@@ -1076,8 +1284,6 @@
                 }
 
                 const existingQty = cart[product.id] ? cart[product.id].qty : 1;
-
-                // Apply real-time green highlights to matching text strings
                 const displayedName = highlightText(product.name, searchKeyword);
                 const displayedID = highlightText(product.id, searchKeyword);
 
@@ -1124,6 +1330,116 @@
                 grid.appendChild(card);
                 updatePriceDisplay(product.id, existingQty);
             });
+        }
+
+        /* --- Product View Module Logical Controllers --- */
+        function openProductModal(productId) {
+            const product = productsData.find(p => p.id === productId);
+            if (!product) return;
+
+            const overlay = document.getElementById('productViewOverlay');
+            const qtyInput = document.getElementById('modalQtyInput');
+            const currentQty = cart[productId] ? cart[productId].qty : (parseInt(document.getElementById('input-' + productId)?.value) || 1);
+
+            // Bind data points to window DOM structures
+            document.getElementById('modalProductId').textContent = `ID: ${product.id}`;
+            document.getElementById('modalDisplayImg').src = product.img;
+            document.getElementById('modalDisplayImg').alt = product.name;
+            document.getElementById('modalProductTitle').textContent = product.name;
+            document.getElementById('modalProductDesc').textContent = product.description || 'Premium OEM grade replacement component.';
+            qtyInput.value = currentQty;
+
+            // Generate structural components for wholesale price tables
+            const tiersContainer = document.getElementById('modalTiersContainer');
+            tiersContainer.innerHTML = '';
+            product.tiers.forEach(tier => {
+                const row = document.createElement('div');
+                row.className = 'modal-tier-item';
+                row.id = `modal-tier-row-${product.id}-${tier.min}`;
+                const displayPrice = typeof tier.price === 'number' ? `₹${tier.price}` : tier.price;
+                row.innerHTML = `<span>Buy ${tier.min}+ pcs</span> <span>${displayPrice}</span>`;
+                tiersContainer.appendChild(row);
+            });
+
+            // Re-render stock classification tags
+            const badge = document.getElementById('modalStockBadge');
+            badge.className = `stock-badge ${product.inStock ? 'status-ready' : 'status-out'}`;
+            badge.textContent = product.inStock ? 'Ready Stock' : 'Out of Stock';
+
+            // Establish primary button setups
+            const actionBlock = document.getElementById('modalActionBlock');
+            if (product.inStock) {
+                actionBlock.innerHTML = `<button class="add-btn" onclick="addToCart('${product.id}', false); closeProductModal();">Add to Cart</button>`;
+            } else {
+                actionBlock.innerHTML = `
+                    <button class="add-btn out-of-stock" disabled>Out of stock</button>
+                    <button class="prebook-btn" onclick="addToCart('${product.id}', true); closeProductModal();">Pre-book Item</button>
+                `;
+            }
+
+            // Assign transactional handlers to click interactions
+            document.getElementById('modalMinusBtn').onclick = () => stepModalQty(product.id, -1);
+            document.getElementById('modalPlusBtn').onclick = () => stepModalQty(product.id, 1);
+            qtyInput.oninput = () => handleModalQtyInput(product.id);
+
+            updateModalPriceDisplay(product, currentQty);
+            overlay.classList.add('active');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productViewOverlay').classList.remove('active');
+        }
+
+        function stepModalQty(productId, change) {
+            const input = document.getElementById('modalQtyInput');
+            let val = parseInt(input.value) || 1;
+            val += change;
+            if (val < 1) val = 1;
+            input.value = val;
+            handleModalQtyInput(productId);
+        }
+
+        function handleModalQtyInput(productId) {
+            const product = productsData.find(p => p.id === productId);
+            const input = document.getElementById('modalQtyInput');
+            let val = parseInt(input.value);
+            if (isNaN(val) || val < 1) val = 1;
+            
+            // Mirror internal configuration value to back-end layout cells
+            const gridInput = document.getElementById('input-' + productId);
+            if (gridInput) {
+                gridInput.value = val;
+                updatePriceDisplay(productId, val);
+            }
+            updateModalPriceDisplay(product, val);
+        }
+
+        function updateModalPriceDisplay(product, qty) {
+            const uPrice = getUnitPrice(product, qty);
+            const priceEl = document.getElementById('modalPriceView');
+            const tierIndicator = document.getElementById('modalTierIndicator');
+
+            if (uPrice === "DM Me") {
+                priceEl.textContent = "DM Me";
+                tierIndicator.textContent = "MOQ 100+ Wholesale Price";
+            } else {
+                priceEl.textContent = `₹${uPrice}`;
+                if (qty >= 50) tierIndicator.textContent = "MOQ 50 Wholesale Rate";
+                else if (qty >= 10) tierIndicator.textContent = "MOQ 10 Bulk Rate";
+                else tierIndicator.textContent = "Standard Retail Tier";
+            }
+
+            // Highlight the currently active wholesale tier block
+            document.querySelectorAll('.modal-tier-item').forEach(el => el.classList.remove('highlight-tier'));
+            let activeMin = 1;
+            for (let tier of product.tiers) {
+                if (qty >= tier.min) {
+                    activeMin = tier.min;
+                    break;
+                }
+            }
+            const activeRow = document.getElementById(`modal-tier-row-${product.id}-${activeMin}`);
+            if (activeRow) activeRow.classList.add('highlight-tier');
         }
 
         function filterCategory(categoryKey, tabBtn) {
