@@ -826,12 +826,65 @@
             position: relative;
             height: 100%;
             min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .modal-display-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* --- Integrated Link Copy & Share Actions Layer --- */
+        .modal-share-actions-tray {
+            position: relative;
+            z-index: 5;
+            margin-top: auto;
+            width: 100%;
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.85) 30%, rgba(15, 23, 42, 0.4) 80%, transparent);
+            padding: 30px 16px 16px 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-action-icon-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s var(--ease-smooth);
+        }
+
+        .modal-action-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .modal-action-icon-btn:active {
+            transform: translateY(0);
+        }
+
+        .modal-action-icon-btn.copy-success {
+            background: var(--success);
+            border-color: var(--success);
         }
 
         .modal-body-pane {
@@ -938,8 +991,8 @@
                 overflow-y: auto;
             }
             .modal-image-pane {
-                min-height: 200px;
-                height: 200px;
+                min-height: 280px;
+                height: 280px;
             }
             .modal-body-pane {
                 padding: 20px 16px;
@@ -972,9 +1025,9 @@
                     <input type="text" class="advanced-search-box" id="advancedSearchInput" placeholder="Search by exact Product ID or spare parts name..." oninput="executeSearchAndFilters()">
                 </div>
                 <div class="filter-toggle-group">
-                    <button class="filter-toggle-btn active" onclick="toggleStockFilter('all', this)">All Stock</button>
-                    <button class="filter-toggle-btn" onclick="toggleStockFilter('ready', this)">Ready Stock</button>
-                    <button class="filter-toggle-btn" onclick="toggleStockFilter('out', this)">Out of Stock</button>
+                    <button class="filter-toggle-btn" id="stock-filter-all" onclick="toggleStockFilter('all', this)">All Stock</button>
+                    <button class="filter-toggle-btn active" id="stock-filter-ready" onclick="toggleStockFilter('ready', this)">Ready Stock</button>
+                    <button class="filter-toggle-btn" id="stock-filter-out" onclick="toggleStockFilter('out', this)">Out of Stock</button>
                 </div>
             </div>
 
@@ -1011,7 +1064,19 @@
                     </div>
                     <span class="stock-badge" id="modalStockBadge">Stock</span>
                 </div>
+                
                 <img src="" alt="" class="modal-display-img" id="modalDisplayImg">
+                
+                <div class="modal-share-actions-tray">
+                    <button class="modal-action-icon-btn" id="modalCopyLinkBtn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        <span id="modalCopyBtnText">Copy Link</span>
+                    </button>
+                    <button class="modal-action-icon-btn" id="modalShareNativeBtn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                        Share Part
+                    </button>
+                </div>
             </div>
             <div class="modal-body-pane">
                 <div class="modal-product-header">
@@ -1194,7 +1259,8 @@
 
         let cart = {};
         let currentCategoryFilter = 'all';
-        let currentStockFilter = 'all';
+        // Changed default state string configuration to target 'ready' elements instantly
+        let currentStockFilter = 'ready';
 
         function getUnitPrice(product, qty) {
             for (let tier of product.tiers) {
@@ -1205,6 +1271,7 @@
 
         function initPOS() {
             renderGrid();
+            checkForSharedProduct();
         }
 
         function executeSearchAndFilters() {
@@ -1264,7 +1331,6 @@
                 card.className = `product-card`;
                 card.id = `card-${product.id}`;
                 
-                // Open modal on layout card click, unless button controls are focused
                 card.onclick = (e) => {
                     if (!e.target.closest('.qty-btn') && !e.target.closest('.qty-input') && !e.target.closest('.add-btn') && !e.target.closest('.prebook-btn')) {
                         openProductModal(product.id);
@@ -1382,12 +1448,65 @@
             document.getElementById('modalPlusBtn').onclick = () => stepModalQty(product.id, 1);
             qtyInput.oninput = () => handleModalQtyInput(product.id);
 
+            // Configure share link handlers
+            const shareUrl = `${window.location.origin}${window.location.pathname}?pid=${product.id}`;
+            
+            document.getElementById('modalCopyLinkBtn').onclick = () => {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    const btn = document.getElementById('modalCopyLinkBtn');
+                    const txt = document.getElementById('modalCopyBtnText');
+                    btn.classList.add('copy-success');
+                    txt.textContent = 'Copied!';
+                    setTimeout(() => {
+                        btn.classList.remove('copy-success');
+                        txt.textContent = 'Copy Link';
+                    }, 2000);
+                });
+            };
+
+            document.getElementById('modalShareNativeBtn').onclick = () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: product.name,
+                        text: `Check out ${product.name} (ID: ${product.id}) on MH SPARE HUB.`,
+                        url: shareUrl
+                    }).catch(console.error);
+                } else {
+                    // Fallback to WhatsApp if Web Share API is missing
+                    window.open(`https://wa.me/?text=${encodeURIComponent(`Check out ${product.name} (ID: ${product.id}) on MH SPARE HUB: ` + shareUrl)}`, '_blank');
+                }
+            };
+
             updateModalPriceDisplay(product, currentQty);
             overlay.classList.add('active');
+            
+            // Set URL parameters smoothly without reloading
+            window.history.replaceState(null, '', `?pid=${product.id}`);
         }
 
         function closeProductModal() {
             document.getElementById('productViewOverlay').classList.remove('active');
+            // Remove URL parameter string smoothly on layout modal close
+            window.history.replaceState(null, '', window.location.pathname);
+        }
+
+        // Check for specific incoming URL share parameter triggers on load
+        function checkForSharedProduct() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('pid');
+            if (productId) {
+                const product = productsData.find(p => p.id === productId);
+                if (product) {
+                    // Temporarily relax stock filter settings if user views an out of stock product directly via shared link
+                    if (!product.inStock && currentStockFilter === 'ready') {
+                        currentStockFilter = 'all';
+                        document.querySelectorAll('.filter-toggle-btn').forEach(btn => btn.classList.remove('active'));
+                        document.getElementById('stock-filter-all').classList.add('active');
+                        renderGrid();
+                    }
+                    openProductModal(productId);
+                }
+            }
         }
 
         function stepModalQty(productId, change) {
