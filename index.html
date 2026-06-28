@@ -109,6 +109,16 @@
             transition: all 0.4s var(--ease-elastic);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             will-change: transform, background-color;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-total-panel:hover {
+            background: #334155;
+            transform: translateY(-1px);
         }
 
         .scale-up {
@@ -626,6 +636,7 @@
             position: sticky;
             top: 140px; 
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+            scroll-margin-top: 150px;
         }
 
         .cart-toggle-header {
@@ -1007,7 +1018,8 @@
         <div class="logo-container">
             <img src="https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/logo/Logo%20big%20.png" alt="" class="brand-logo">
         </div>
-        <div class="header-total-panel" id="headerTotal">Total: ₹0</div>
+        <!-- Total box updated to call openCartView() on click -->
+        <button class="header-total-panel" id="headerTotal" onclick="openCartView()">Total: ₹0</button>
     </header>
 
     <nav class="category-nav-wrapper">
@@ -1067,6 +1079,7 @@
                 
                 <img src="" alt="" class="modal-display-img" id="modalDisplayImg">
                 
+                <!-- Share and Link Generation Layer -->
                 <div class="modal-share-actions-tray">
                     <button class="modal-action-icon-btn" id="modalCopyLinkBtn">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
@@ -1259,7 +1272,6 @@
 
         let cart = {};
         let currentCategoryFilter = 'all';
-        // Changed default state string configuration to target 'ready' elements instantly
         let currentStockFilter = 'ready';
 
         function getUnitPrice(product, qty) {
@@ -1398,7 +1410,6 @@
             });
         }
 
-        /* --- Product View Module Logical Controllers --- */
         function openProductModal(productId) {
             const product = productsData.find(p => p.id === productId);
             if (!product) return;
@@ -1407,7 +1418,6 @@
             const qtyInput = document.getElementById('modalQtyInput');
             const currentQty = cart[productId] ? cart[productId].qty : (parseInt(document.getElementById('input-' + productId)?.value) || 1);
 
-            // Bind data points to window DOM structures
             document.getElementById('modalProductId').textContent = `ID: ${product.id}`;
             document.getElementById('modalDisplayImg').src = product.img;
             document.getElementById('modalDisplayImg').alt = product.name;
@@ -1415,7 +1425,6 @@
             document.getElementById('modalProductDesc').textContent = product.description || 'Premium OEM grade replacement component.';
             qtyInput.value = currentQty;
 
-            // Generate structural components for wholesale price tables
             const tiersContainer = document.getElementById('modalTiersContainer');
             tiersContainer.innerHTML = '';
             product.tiers.forEach(tier => {
@@ -1427,12 +1436,10 @@
                 tiersContainer.appendChild(row);
             });
 
-            // Re-render stock classification tags
             const badge = document.getElementById('modalStockBadge');
             badge.className = `stock-badge ${product.inStock ? 'status-ready' : 'status-out'}`;
             badge.textContent = product.inStock ? 'Ready Stock' : 'Out of Stock';
 
-            // Establish primary button setups
             const actionBlock = document.getElementById('modalActionBlock');
             if (product.inStock) {
                 actionBlock.innerHTML = `<button class="add-btn" onclick="addToCart('${product.id}', false); closeProductModal();">Add to Cart</button>`;
@@ -1443,12 +1450,10 @@
                 `;
             }
 
-            // Assign transactional handlers to click interactions
             document.getElementById('modalMinusBtn').onclick = () => stepModalQty(product.id, -1);
             document.getElementById('modalPlusBtn').onclick = () => stepModalQty(product.id, 1);
             qtyInput.oninput = () => handleModalQtyInput(product.id);
 
-            // Configure share link handlers
             const shareUrl = `${window.location.origin}${window.location.pathname}?pid=${product.id}`;
             
             document.getElementById('modalCopyLinkBtn').onclick = () => {
@@ -1472,7 +1477,6 @@
                         url: shareUrl
                     }).catch(console.error);
                 } else {
-                    // Fallback to WhatsApp if Web Share API is missing
                     window.open(`https://wa.me/?text=${encodeURIComponent(`Check out ${product.name} (ID: ${product.id}) on MH SPARE HUB: ` + shareUrl)}`, '_blank');
                 }
             };
@@ -1480,24 +1484,20 @@
             updateModalPriceDisplay(product, currentQty);
             overlay.classList.add('active');
             
-            // Set URL parameters smoothly without reloading
             window.history.replaceState(null, '', `?pid=${product.id}`);
         }
 
         function closeProductModal() {
             document.getElementById('productViewOverlay').classList.remove('active');
-            // Remove URL parameter string smoothly on layout modal close
             window.history.replaceState(null, '', window.location.pathname);
         }
 
-        // Check for specific incoming URL share parameter triggers on load
         function checkForSharedProduct() {
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('pid');
             if (productId) {
                 const product = productsData.find(p => p.id === productId);
                 if (product) {
-                    // Temporarily relax stock filter settings if user views an out of stock product directly via shared link
                     if (!product.inStock && currentStockFilter === 'ready') {
                         currentStockFilter = 'all';
                         document.querySelectorAll('.filter-toggle-btn').forEach(btn => btn.classList.remove('active'));
@@ -1524,7 +1524,6 @@
             let val = parseInt(input.value);
             if (isNaN(val) || val < 1) val = 1;
             
-            // Mirror internal configuration value to back-end layout cells
             const gridInput = document.getElementById('input-' + productId);
             if (gridInput) {
                 gridInput.value = val;
@@ -1548,7 +1547,6 @@
                 else tierIndicator.textContent = "Standard Retail Tier";
             }
 
-            // Highlight the currently active wholesale tier block
             document.querySelectorAll('.modal-tier-item').forEach(el => el.classList.remove('highlight-tier'));
             let activeMin = 1;
             for (let tier of product.tiers) {
@@ -1679,6 +1677,19 @@
 
             cartCount.textContent = totalItemsCount;
             headerTotal.textContent = hasDM ? "Total: DM Me" : `Total: ₹${totalSum}`;
+        }
+
+        /* --- New Dedicated Function to trigger Cart View panel globally --- */
+        function openCartView() {
+            const cartPanel = document.getElementById('cartPanel');
+            
+            // If the user layout matches mobile screen parameters, force panel view presentation state expansion
+            if (window.innerWidth <= 900) {
+                cartPanel.classList.add('open');
+            }
+            
+            // Smoothly snap focus viewport down straight to checkout pane layout coordinates
+            cartPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         function toggleMobileCart(event) {
