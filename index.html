@@ -1018,15 +1018,14 @@
         <div class="logo-container">
             <img src="https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/logo/Logo%20big%20.png" alt="" class="brand-logo">
         </div>
-        <!-- Total box updated to call openCartView() on click -->
         <button class="header-total-panel" id="headerTotal" onclick="openCartView()">Total: ₹0</button>
     </header>
 
     <nav class="category-nav-wrapper">
-        <button class="category-tab active" onclick="filterCategory('all', this)">📁 All Products</button>
-        <button class="category-tab" onclick="filterCategory('tws-battery', this)">🔋 TWS Battery</button>
-        <button class="category-tab" onclick="filterCategory('IPhone-Calibration-Battery', this)">IPhone 🔋 Calibration Battery</button>
-        <button class="category-tab" onclick="filterCategory('gaming-console', this)">🎮 Gaming Console</button>
+        <button class="category-tab active" data-category="all" onclick="filterCategory('all', this)">📁 All Products</button>
+        <button class="category-tab" data-category="tws-battery" onclick="filterCategory('tws-battery', this)">🔋 TWS Battery</button>
+        <button class="category-tab" data-category="IPhone-Calibration-Battery" onclick="filterCategory('IPhone-Calibration-Battery', this)">IPhone 🔋 Calibration Battery</button>
+        <button class="category-tab" data-category="gaming-console" onclick="filterCategory('gaming-console', this)">🎮 Gaming Console</button>
     </nav>
 
     <div class="container">
@@ -1079,7 +1078,6 @@
                 
                 <img src="" alt="" class="modal-display-img" id="modalDisplayImg">
                 
-                <!-- Share and Link Generation Layer -->
                 <div class="modal-share-actions-tray">
                     <button class="modal-action-icon-btn" id="modalCopyLinkBtn">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
@@ -1131,7 +1129,7 @@
                 category: "tws-battery",
                 name: "Ear Buds Compatible OEM Square small",
                 description: "Compact structural build designed for square-type structural configurations. Offers stable impedance alignment.",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/400808.png?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/400808.png",
                 inStock: false,
                 popular: false,
                 tiers: [
@@ -1146,7 +1144,7 @@
                 category: "tws-battery",
                 name: "Ear Buds Round Medum Compatible OEM Battery With Wire",
                 description: "Integrated pre-soldered positive and negative micro-leads. High structural matching for round chassis models.",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1054.png?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1054.png",
                 inStock: true,
                 popular: true,
                 tiers: [
@@ -1161,7 +1159,7 @@
                 category: "tws-battery",
                 name: "Ear Buds Round Small Compatible OEM Battery With Wire",
                 description: "Ultra-compact form factor for small-profile modular repairs. Low self-discharge rate with factory leads.",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1040.png?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1040.png",
                 inStock: false,
                 tiers: [
                     { min: 100, price: "DM Me" },
@@ -1175,7 +1173,7 @@
                 category: "tws-battery",
                 name: "Ear Buds Compatible OEM Square Mini",
                 description: "Micro-miniature profile designed specifically for space-constrained square earbud configurations.",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/401010.png?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/401010.png",
                 inStock: false,
                 tiers: [
                     { min: 100, price: "DM Me" },
@@ -1189,7 +1187,7 @@
                 category: "tws-battery",
                 name: "Ear Buds OEM Compatible Iron Coated Round Medium With Wire High Capacity Battery",
                 description: "Premium puncture-resistant outer iron armor coating. Extra-long continuous play cycle life.",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1154.jpg?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1154.jpg",
                 inStock: false,
                 tiers: [
                     { min: 100, price: "DM Me" },
@@ -1203,7 +1201,7 @@
                 category: "tws-battery",
                 name: "Ear Buds Compatible Round Medium High Capacity OEM Battery Without Wire",
                 description: "Direct-solder contact pads for customized wiring lengths. Optimised high energy density.",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1045.png?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1045.png",
                 inStock: false,
                 tiers: [
                     { min: 100, price: "DM Me" },
@@ -1217,7 +1215,7 @@
                 category: "tws-battery",
                 name: "Ear Buds Compatible Round Medium OEM Battery Without Wire",
                 description: "Standard grade production replacement cell. Reliable power output metrics across normal temperatures.",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1240.png?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1240.png",
                 inStock: false,
                 tiers: [
                     { min: 100, price: "DM Me" },
@@ -1231,7 +1229,7 @@
                 category: "tws-battery",
                 name: "Ear Buds Compatible Round Medium OEM Battery Without Wire",
                 description: "Balanced energy cell without wire extensions. Excellent structural alignment for standard multi-brand replacements.",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1140.png?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/Photo/1140.png",
                 inStock: false,
                 tiers: [
                     { min: 100, price: "DM Me" },
@@ -1245,7 +1243,7 @@
                 category: "IPhone-Calibration-Battery",
                 name: " iPhone 12 mini Calibration Battery Used Show",
                 description: "✔ Status: Used Show ✔ Service: Battery Calibration ✔ Warranty: 6 Months ✔ Quality Tested & Reliable",
-                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/IPhone%20%20Calibration%20Battery/DX12.png?w=400&auto=format&fit=crop&q=80",
+                img: "https://raw.githubusercontent.com/muhammedhaseeb9645/MH-SPARE-HUB/refs/heads/main/IPhone%20%20Calibration%20Battery/DX12.png",
                 inStock: false,
                 tiers: [
                     { min: 50, price: 1100 },
@@ -1261,7 +1259,7 @@
                 category: "gaming-console",
                 name: "PS5 DualSense OEM Analogue Joystick",
                 description: "High accuracy ALPS potentiometer replacement core to eliminate stick drift vectors.",
-                img: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&auto=format&fit=crop&q=80",
+                img: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3",
                 inStock: true,
                 tiers: [
                     { min: 50, price: 85 },
@@ -1282,7 +1280,6 @@
         }
 
         function initPOS() {
-            renderGrid();
             checkForSharedProduct();
         }
 
@@ -1498,15 +1495,29 @@
             if (productId) {
                 const product = productsData.find(p => p.id === productId);
                 if (product) {
+                    // Update category layout automatically matching the product category link properties
+                    currentCategoryFilter = product.category;
+                    document.querySelectorAll('.category-tab').forEach(btn => {
+                        if (btn.getAttribute('data-category') === product.category) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+
+                    // Ensure shared link items are accessible regardless of stock configuration filter setups
                     if (!product.inStock && currentStockFilter === 'ready') {
                         currentStockFilter = 'all';
                         document.querySelectorAll('.filter-toggle-btn').forEach(btn => btn.classList.remove('active'));
                         document.getElementById('stock-filter-all').classList.add('active');
-                        renderGrid();
                     }
+                    
+                    renderGrid();
                     openProductModal(productId);
+                    return;
                 }
             }
+            renderGrid();
         }
 
         function stepModalQty(productId, change) {
@@ -1679,16 +1690,11 @@
             headerTotal.textContent = hasDM ? "Total: DM Me" : `Total: ₹${totalSum}`;
         }
 
-        /* --- New Dedicated Function to trigger Cart View panel globally --- */
         function openCartView() {
             const cartPanel = document.getElementById('cartPanel');
-            
-            // If the user layout matches mobile screen parameters, force panel view presentation state expansion
             if (window.innerWidth <= 900) {
                 cartPanel.classList.add('open');
             }
-            
-            // Smoothly snap focus viewport down straight to checkout pane layout coordinates
             cartPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
